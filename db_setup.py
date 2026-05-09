@@ -1,5 +1,9 @@
 import sqlite3
 
+# Scaling values reflect standard affinity at max upgrade level.
+# Somber weapons reflect their fixed scaling at +10.
+# Affinity-specific scaling is out of scope for v1/v2.
+
 conn = sqlite3.connect('elden_lord.db')
 cursor_obj = conn.cursor()
 
