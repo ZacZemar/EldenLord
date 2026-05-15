@@ -153,4 +153,4 @@ A weapon qualifies as bleed-eligible if it meets **any one** of the following:
 
 ---
 
-*May the guidance of grace light your path, Tarnished.*
+*May the golden order shine through you, Tarnished.*
