@@ -1,4 +1,4 @@
-from query import display_bleed_weapons, display_madness_build
+from query import display_bleed_build, display_madness_build
  
 def main():
     choices = ["1","2","3","4","5"]
@@ -17,7 +17,7 @@ def main():
         choice = input("\nEnter choice (1-5): ").strip()
 
         if choice == "1":
-            display_bleed_weapons()
+            display_bleed_build()
             break
 
         if choice == "2":
