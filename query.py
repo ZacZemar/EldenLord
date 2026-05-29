@@ -2,8 +2,8 @@ import sqlite3
 
 DB_NAME = "elden_lord.db"
 
-def get_bleed_weapons():
-    conn = sqlite3.connect(DB_NAME)
+def get_bleed_weapons(db_name=DB_NAME):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
     # Fetch all bleed eligible weapons - qualifies if it meets ANY one condition
@@ -68,6 +68,118 @@ def display_bleed_weapons():
         else:
             print(f"Incants    : No incantation buffs compatible")
 
+        print("-" * 40)
+
+def get_bleed_incantations(db_name=DB_NAME):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT Name, Description
+        FROM INCANTATIONS
+        WHERE damage_type = 'bleed'
+        ORDER BY incantation_id
+    """)
+    incantations = cursor.fetchall()
+
+    conn.close()
+
+    return [
+        {
+            "name": name,
+            "description": description,
+        }
+        for name, description in incantations
+    ]
+
+
+def get_bleed_talismans(db_name=DB_NAME):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT Name, Effect
+        FROM TALISMANS
+        WHERE Name IN (
+            "Lord of Blood's Exultation",
+            "Rotten Winged Sword Insignia"
+        )
+        ORDER BY talisman_id
+    """)
+    talismans = cursor.fetchall()
+
+    conn.close()
+
+    return [
+        {
+            "name": name,
+            "effect": effect,
+        }
+        for name, effect in talismans
+    ]
+
+
+def get_bleed_build(db_name=DB_NAME):
+    return {
+        "build_type": "bleed",
+        "summary": (
+            "Bleed builds focus on triggering blood loss through innate bleed weapons, "
+            "blood infusion, or compatible bleed-related incantations."
+        ),
+        "mechanic_notes": [
+            (
+                "A weapon qualifies for this Bleed build view if it has innate bleed, "
+                "can receive blood infusion, or can receive a bleed-related weapon buff."
+            ),
+            (
+                "Bloodflame Blade is a weapon-buff incantation, so weapon compatibility "
+                "matters for that specific type of incantation."
+            ),
+            (
+                "This tool does not calculate exact damage, exact status buildup, "
+                "or affinity-specific scaling values yet."
+            ),
+        ],
+        "weapons": get_bleed_weapons(db_name),
+        "incantations": get_bleed_incantations(db_name),
+        "talismans": get_bleed_talismans(db_name),
+    }
+
+
+def display_bleed_build():
+    build = get_bleed_build()
+
+    print("\n=== BLEED BUILD ===\n")
+    print(build["summary"])
+
+    print("\n--- Mechanic Notes ---")
+    for note in build["mechanic_notes"]:
+        print(f"- {note}")
+
+    print("\n--- Bleed Eligible Weapons ---")
+    for weapon in build["weapons"]:
+        print(f"Weapon     : {weapon['name']}")
+        print(f"Scaling    : {weapon['scaling']}")
+        print(f"Ash of War : {weapon['ash_of_war']}")
+        print(f"Bleed Via  : {', '.join(weapon['bleed_sources'])}")
+
+        if weapon["incantations"]:
+            print(f"Incants    : {', '.join(weapon['incantations'])}")
+        else:
+            print("Incants    : No incantation buffs compatible")
+
+        print("-" * 40)
+
+    print("\n--- Bleed Incantations ---")
+    for incantation in build["incantations"]:
+        print(f"Incantation : {incantation['name']}")
+        print(f"Description : {incantation['description']}")
+        print("-" * 40)
+
+    print("\n--- Supporting Talismans ---")
+    for talisman in build["talismans"]:
+        print(f"Talisman : {talisman['name']}")
+        print(f"Effect   : {talisman['effect']}")
         print("-" * 40)
 
 def get_madness_weapons(db_name=DB_NAME):
