@@ -154,3 +154,40 @@ A weapon qualifies as bleed-eligible if it meets **any one** of the following:
 ---
 
 *May the golden order shine through you, Tarnished.*
+
+# Update for the README: Audit
+
+## Build Response Contract
+
+Every build query should return a dictionary with:
+
+- build_type
+- summary
+- mechanic_notes
+- weapons
+- incantations
+- sorceries
+- talismans
+- seals
+
+### Build Response Contract
+
+Bleed and Madness now return structured build data, but the expected build response shape is not yet formally documented. Before adding several more build types or moving to Django, the project should define a standard response contract so each build type returns predictable JSON-friendly data.
+
+### Standard Shape
+
+```python
+{
+    "build_type": "bleed",
+    "summary": "...",
+    "mechanic_notes": [...],
+    "weapons": [...],
+    "incantations": [...],
+    "sorceries": [...],
+    "talismans": [...],
+    "seals": [...]
+}
+
+### CLI / Query Separation
+
+The project currently keeps database query functions and CLI display functions close together. This is acceptable for the CLI proof of concept, but before converting to Django, query/build logic should be separated from terminal display logic so the same build responses can power both the CLI and future API endpoints.
