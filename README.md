@@ -191,3 +191,50 @@ Bleed and Madness now return structured build data, but the expected build respo
 ### CLI / Query Separation
 
 The project currently keeps database query functions and CLI display functions close together. This is acceptable for the CLI proof of concept, but before converting to Django, query/build logic should be separated from terminal display logic so the same build responses can power both the CLI and future API endpoints.
+
+
+### Frost V1 Scope
+
+Frost V1 mirrors the Bleed eligibility model conceptually: a weapon can qualify for a build through more than one supported path.
+
+For Frost, a weapon is eligible if it can access Frostbite through one or more modeled weapon-level paths:
+
+- `has_innate_frost`
+- `can_cold_infuse`
+- `can_receive_frozen_grease`
+- `can_receive_frozen_armament`
+
+`has_innate_frost` already exists from the third migration. Issue #27 adds the remaining Frost eligibility columns:
+
+- `can_cold_infuse`
+- `can_receive_frozen_grease`
+- `can_receive_frozen_armament`
+
+These columns describe whether a weapon can access Frostbite through a specific weapon path. They do not model Frostbite buildup scaling.
+
+Important mechanic note:
+
+- INT can improve Cold-affinity weapon damage when Cold affinity adds INT scaling.
+- INT does **not** increase Frostbite buildup rate.
+- Frostbite buildup should not be modeled as scaling with INT or Arcane.
+
+### Deferred Frost Sources
+
+Frost V1 does not model Frost skills, Ashes of War, sorceries, or consumables as separate build sources yet.
+
+Deferred examples include:
+
+- Hoarfrost Stomp
+- Chilling Mist
+- Zamor Ice Storm
+- Icecrag-style sorceries
+- Freezing Mist-style sorceries
+- Freezing Pot or other consumable projectile sources
+
+These are valid Frost tools, but they are not the same as the weapon eligibility paths above. Some are skill-based, some are spell-based, and some depend on separate compatibility rules.
+
+For now:
+
+- `Ash_of_War` is treated as a display field.
+- Frost eligibility comes from explicit eligibility flags.
+- Skill-source Frost is deferred.
