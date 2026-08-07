@@ -238,3 +238,26 @@ For now:
 - `Ash_of_War` is treated as a display field.
 - Frost eligibility comes from explicit eligibility flags.
 - Skill-source Frost is deferred.
+
+
+### Local Development Environment
+
+This project uses a local virtual environment for development.
+
+Create the environment:
+
+```bash
+./scripts/setup_dev_env.sh
+
+Then you can manually make a venv:
+
+./scripts/setup_dev_env.sh
+source .venv/bin/activate 
+
+If you want to automate it:
+
+./scripts/setup_dev_env.sh
+cp .envrc.example .envrc
+direnv allow
+
+if you do not have direnv you can install with sudo apt install direnv
