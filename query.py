@@ -44,7 +44,7 @@ def get_bleed_weapons(db_name=DB_NAME):
             "name": name,
             "scaling": scaling,
             "ash_of_war": ash_of_war,
-            "bleed_sources": reasons,
+            "status_effect_sources": reasons,
             "incantations": incantations if incantations else None
         })
 
@@ -61,7 +61,7 @@ def display_bleed_weapons():
         print(f"Weapon     : {w['name']}")
         print(f"Scaling    : {w['scaling']}")
         print(f"Ash of War : {w['ash_of_war']}")
-        print(f"Bleed Via  : {', '.join(w['bleed_sources'])}")
+        print(f"Bleed Via  : {', '.join(w['status_effect_sources'])}")
 
         if w["incantations"]:
             print(f"Incants    : {', '.join(w['incantations'])}")
@@ -161,7 +161,7 @@ def display_bleed_build():
         print(f"Weapon     : {weapon['name']}")
         print(f"Scaling    : {weapon['scaling']}")
         print(f"Ash of War : {weapon['ash_of_war']}")
-        print(f"Bleed Via  : {', '.join(weapon['bleed_sources'])}")
+        print(f"Bleed Via  : {', '.join(weapon['status_effect_sources'])}")
 
         if weapon["incantations"]:
             print(f"Incants    : {', '.join(weapon['incantations'])}")
@@ -182,30 +182,67 @@ def display_bleed_build():
         print(f"Effect   : {talisman['effect']}")
         print("-" * 40)
 
+
+def build_madness_sources(
+has_innate_madness,
+):
+    status_effect_sources = []
+
+    if has_innate_madness:
+        status_effect_sources.append("Innate Madness")
+
+    return status_effect_sources
+
 def get_madness_weapons(db_name=DB_NAME):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT Name, Scaling, Damage, Passive, Ash_of_War
+        SELECT
+            weapon_id,
+            Name, 
+            Scaling, 
+            Damage, 
+            Passive, 
+            Ash_of_War,
+            has_innate_madness
         FROM WEAPONS
         WHERE has_innate_madness = 1
         ORDER BY weapon_id
     """)
-    weapons = cursor.fetchall()
+
+    madness = cursor.fetchall()
 
     conn.close()
 
-    return [
-        {
+    results = []
+
+    for weapon in madness:
+        (
+            weapon_id,
+            name,
+            scaling,
+            damage,
+            passive,
+            ash_of_war,
+            has_innate_madness,
+        ) = weapon
+
+        status_effect_sources = build_madness_sources(
+            has_innate_madness,
+        )
+
+        results.append({
+            "weapon_id": weapon_id,
             "name": name,
             "scaling": scaling,
             "damage": damage,
             "passive": passive,
             "ash_of_war": ash_of_war,
-        }
-        for name, scaling, damage, passive, ash_of_war in weapons
-    ]
+            "status_effect_sources": status_effect_sources,
+        })
+
+    return results
 
 
 def get_madness_incantations(db_name=DB_NAME):
@@ -317,8 +354,8 @@ def get_madness_build(db_name=DB_NAME):
     }
 
 
-def display_madness_build():
-    build = get_madness_build()
+def display_madness_build(db_name=DB_NAME):
+    build = get_madness_build(db_name)
 
     print("\n=== MADNESS / FRENZIED FLAME BUILD ===\n")
     print(build["summary"])
@@ -334,6 +371,8 @@ def display_madness_build():
         print(f"Damage     : {weapon['damage']}")
         print(f"Passive    : {weapon['passive']}")
         print(f"Ash of War : {weapon['ash_of_war']}")
+        print(f"Madness Via  : {', '.join(weapon['status_effect_sources'])}")
+        
         print("-" * 40)
 
     print("\n--- Frenzied Flame Incantations ---")
@@ -366,21 +405,21 @@ can_cold_infuse,
 can_receive_frozen_armament,
 can_receive_frozen_grease,
 ):
-    frost_sources = []
+    status_effect_sources = []
 
     if has_innate_frost:
-        frost_sources.append("Innate Frostbite")
+        status_effect_sources.append("Innate Frostbite")
 
     if can_cold_infuse:
-        frost_sources.append("Cold Affinity")
+        status_effect_sources.append("Cold Affinity")
 
     if can_receive_frozen_armament:
-        frost_sources.append("Frozen Armament")
+        status_effect_sources.append("Frozen Armament")
 
     if can_receive_frozen_grease:
-        frost_sources.append("Frozen Grease")
+        status_effect_sources.append("Frozen Grease")
 
-    return frost_sources
+    return status_effect_sources
 
 
 def get_frost_weapons(db_name=DB_NAME):
@@ -427,7 +466,7 @@ def get_frost_weapons(db_name=DB_NAME):
             can_receive_frozen_grease,
         ) = weapon
 
-        frost_sources = build_frost_sources(
+        status_effect_sources = build_frost_sources(
             has_innate_frost,
             can_cold_infuse,
             can_receive_frozen_armament,
@@ -441,7 +480,7 @@ def get_frost_weapons(db_name=DB_NAME):
             "damage": damage,
             "passive": passive,
             "ash_of_war": ash_of_war,
-            "frost_sources": frost_sources,
+            "status_effect_sources": status_effect_sources,
         })
 
     return results
@@ -492,7 +531,7 @@ def display_frost_build(db_name=DB_NAME):
         print(f"Weapon     : {weapon['name']}")
         print(f"Scaling    : {weapon['scaling']}")
         print(f"Ash of War : {weapon['ash_of_war']}")
-        print(f"Frost Via  : {', '.join(weapon['frost_sources'])}")
+        print(f"Frost Via  : {', '.join(weapon['status_effect_sources'])}")
 
         print("-" * 40)
 
