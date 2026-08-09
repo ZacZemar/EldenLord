@@ -122,6 +122,7 @@ WEAPON_INCANTATIONS  (junction table)
 ```
 
 A weapon qualifies as bleed-eligible if it meets **any one** of the following:
+
 - `has_innate_bleed = 1`
 - `can_blood_infuse = 1`
 - `can_receive_bleed_incantation = 1`
@@ -138,11 +139,11 @@ A weapon qualifies as bleed-eligible if it meets **any one** of the following:
 
 ## Roadmap
 
-| Version | Scope |
-|---------|-------|
-| v1 | Bleed weapons CLI — ships with 4 edge-case seed weapons |
-| v2 | Full weapon roster, full stack web interface (Django + React) |
-| v3+ | Frost, Poison, Lightning build support |
+| Version | Scope                                                         |
+| ------- | ------------------------------------------------------------- |
+| v1      | Bleed weapons CLI — ships with 4 edge-case seed weapons       |
+| v2      | Full weapon roster, full stack web interface (Django + React) |
+| v3+     | Frost, Poison, Lightning build support                        |
 
 ---
 
@@ -153,7 +154,7 @@ A weapon qualifies as bleed-eligible if it meets **any one** of the following:
 
 ---
 
-*May the golden order shine through you, Tarnished.*
+_May the golden order shine through you, Tarnished._
 
 # Update for the README: Audit
 
@@ -246,13 +247,13 @@ This project uses a local virtual environment for development.
 
 Create the environment:
 
-```bash
+bash
 ./scripts/setup_dev_env.sh
 
 Then you can manually make a venv:
 
 ./scripts/setup_dev_env.sh
-source .venv/bin/activate 
+source .venv/bin/activate
 
 If you want to automate it:
 
@@ -261,3 +262,16 @@ cp .envrc.example .envrc
 direnv allow
 
 if you do not have direnv you can install with sudo apt install direnv
+
+## Design Decision
+
+All implemented build responses should share the same top-level contract.
+
+Unsupported sections should be returned as empty lists instead of omitted keys. This keeps future API/frontend consumers simple and avoids requiring separate response handling for every build type.
+
+Weapon-level status source fields should move toward a generic `status_effect_sources` field instead of build-specific fields like `bleed_sources` or `frost_sources`.
+
+Build-specific helper functions can remain internally specific, such as `build_bleed_sources()` or `build_frost_sources()`, but the returned weapon dictionaries should expose a generic API-facing field.
+
+The CLI is temporary. Long term, `main.py` should be replaceable by a Django/API layer, while the build/query functions remain reusable.
+```
