@@ -1,7 +1,12 @@
+import sys
 import os
+from pathlib import Path
 import sqlite3
 import tempfile
 import unittest
+
+# Add the parent directory (..) to the Python path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from query import (
     get_madness_weapons,
@@ -9,6 +14,7 @@ from query import (
     get_madness_seals,
     get_madness_talismans,
     get_madness_build,
+    build_madness_sources
 )
 
 
@@ -197,6 +203,13 @@ class TestMadnessQueryLogic(unittest.TestCase):
 
     def tearDown(self):
         os.remove(self.db_path)
+
+    def test_build_madness_sources_for_innate_madness(self):
+        sources = build_madness_sources(
+            has_innate_madness=1,
+        )
+
+        assert sources == ["Innate Madness"]
 
     def test_get_madness_weapons_returns_only_innate_madness_weapons(self):
         weapons = get_madness_weapons(self.db_path)

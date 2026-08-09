@@ -274,4 +274,8 @@ Weapon-level status source fields should move toward a generic `status_effect_so
 Build-specific helper functions can remain internally specific, such as `build_bleed_sources()` or `build_frost_sources()`, but the returned weapon dictionaries should expose a generic API-facing field.
 
 The CLI is temporary. Long term, `main.py` should be replaceable by a Django/API layer, while the build/query functions remain reusable.
+
+Status_effect_sources is the API-facing weapon source field.
+Source values are readable strings for now.
+A future model may turn these into structured objects with source_type, status_effect, and extended notes.
 ```

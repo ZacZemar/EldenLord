@@ -194,9 +194,9 @@ def test_get_frost_weapons_returns_frost_sources_for_each_weapon(tmp_path):
     frozen_needle = weapons[0]
     nagakiba = weapons[1]
 
-    assert frozen_needle["frost_sources"] == ["Innate Frostbite"]
+    assert frozen_needle["status_effect_sources"] == ["Innate Frostbite"]
 
-    assert nagakiba["frost_sources"] == [
+    assert nagakiba["status_effect_sources"] == [
         "Cold Affinity",
         "Frozen Armament",
         "Frozen Grease",
@@ -227,7 +227,7 @@ def test_get_frost_weapons_returns_expected_weapon_shape(tmp_path):
             "damage": "Standard/Pierce",
             "passive": "Frost (60)",
             "ash_of_war": "Impaling Thrust",
-            "frost_sources": ["Innate Frostbite"],
+            "status_effect_sources": ["Innate Frostbite"],
         }
     ]
 
@@ -264,7 +264,7 @@ def test_get_frost_build_returns_structured_build_contract(tmp_path):
     assert len(build["mechanic_notes"]) > 0
 
     assert build["weapons"][0]["name"] == "Frozen Needle"
-    assert build["weapons"][0]["frost_sources"] == ["Innate Frostbite"]
+    assert build["weapons"][0]["status_effect_sources"] == ["Innate Frostbite"]
 
     assert build["incantations"] == []
     assert build["sorceries"] == []

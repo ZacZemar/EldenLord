@@ -1,7 +1,12 @@
+import sys
 import os
+from pathlib import Path
 import sqlite3
 import tempfile
 import unittest
+
+# Add the parent directory (..) to the Python path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from query import (
     get_bleed_weapons,
@@ -219,11 +224,11 @@ class TestBleedBuildQueryLogic(unittest.TestCase):
             if weapon["name"] == "Noble Slender Sword"
         )
 
-        self.assertIn("Innate Bleed", bloodhound["bleed_sources"])
-        self.assertIn("Bleed Incantation", bloodhound["bleed_sources"])
+        self.assertIn("Innate Bleed", bloodhound["status_effect_sources"])
+        self.assertIn("Bleed Incantation", bloodhound["status_effect_sources"])
 
-        self.assertIn("Blood Infusion", noble["bleed_sources"])
-        self.assertIn("Bleed Incantation", noble["bleed_sources"])
+        self.assertIn("Blood Infusion", noble["status_effect_sources"])
+        self.assertIn("Bleed Incantation", noble["status_effect_sources"])
 
     def test_get_bleed_incantations_returns_only_bleed_damage_type(self):
         incantations = get_bleed_incantations(self.db_path)
