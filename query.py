@@ -360,5 +360,142 @@ def display_madness_build():
         print("-" * 40)
 
 
+def build_frost_sources(
+has_innate_frost,
+can_cold_infuse,
+can_receive_frozen_armament,
+can_receive_frozen_grease,
+):
+    frost_sources = []
+
+    if has_innate_frost:
+        frost_sources.append("Innate Frostbite")
+
+    if can_cold_infuse:
+        frost_sources.append("Cold Affinity")
+
+    if can_receive_frozen_armament:
+        frost_sources.append("Frozen Armament")
+
+    if can_receive_frozen_grease:
+        frost_sources.append("Frozen Grease")
+
+    return frost_sources
+
+
+def get_frost_weapons(db_name=DB_NAME):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            weapon_id,
+            Name,
+            Scaling,
+            Damage,
+            Passive,
+            Ash_of_War,
+            has_innate_frost,
+            can_cold_infuse,
+            can_receive_frozen_armament,
+            can_receive_frozen_grease
+        FROM WEAPONS
+        WHERE has_innate_frost = 1
+            OR can_cold_infuse = 1
+            OR can_receive_frozen_armament = 1
+            OR can_receive_frozen_grease = 1
+        ORDER BY weapon_id
+    """)     
+
+    frost =  cursor.fetchall()
+
+    conn.close()
+
+    results = []
+
+    for weapon in frost:
+        (
+            weapon_id,
+            name,
+            scaling,
+            damage,
+            passive,
+            ash_of_war,
+            has_innate_frost,
+            can_cold_infuse,
+            can_receive_frozen_armament,
+            can_receive_frozen_grease,
+        ) = weapon
+
+        frost_sources = build_frost_sources(
+            has_innate_frost,
+            can_cold_infuse,
+            can_receive_frozen_armament,
+            can_receive_frozen_grease,
+        )
+
+        results.append({
+            "weapon_id": weapon_id,
+            "name": name,
+            "scaling": scaling,
+            "damage": damage,
+            "passive": passive,
+            "ash_of_war": ash_of_war,
+            "frost_sources": frost_sources,
+        })
+
+    return results
+
+
+def get_frost_build(db_name=DB_NAME):
+    return {
+        "build_type": "frost",
+        "summary": (
+            "Frost builds focus on triggering frost bite through innate frost weapons, "
+            "cold infusion, or weapon direct frost buffs."
+        ),
+        "mechanic_notes": [
+            (
+                "A weapon qualifies for this Frost build view if it has innate frost, "
+                "can receive a frost infusion, or can receive a frost-related weapon buff."
+            ),
+            (
+                "Frozen Armament is a weapon-buff sorcery, so weapon compatibility matters "
+                "for that specific Frost path. It adds Frostbite buildup to the buffed weapon, "
+                "but this tool does not calculate exact buildup values."
+            ),
+            (
+                "Cold affinity can add Magic damage and INT scaling to a weapon, but INT does "
+                "not increase Frostbite buildup. Frostbite buildup should not be modeled as "
+                "scaling with INT or Arcane."
+            ),
+        ],
+        "weapons": get_frost_weapons(db_name),
+        "incantations": [],
+        "sorceries": [],
+        "talismans": [],
+        "seals": []
+    }   
+
+def display_frost_build(db_name=DB_NAME):
+    build = get_frost_build(db_name)
+
+    print("\n=== FROST BUILD ===\n")
+    print(build["summary"])
+
+    print("\n--- Mechanic Notes ---")
+    for note in build["mechanic_notes"]:
+        print(f"- {note}")
+
+    print("\n--- Frost Eligible Weapons ---")
+    for weapon in build["weapons"]:
+        print(f"Weapon     : {weapon['name']}")
+        print(f"Scaling    : {weapon['scaling']}")
+        print(f"Ash of War : {weapon['ash_of_war']}")
+        print(f"Frost Via  : {', '.join(weapon['frost_sources'])}")
+
+        print("-" * 40)
+
+
 if __name__ == "__main__":
     display_bleed_weapons()
