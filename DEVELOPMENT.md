@@ -23,8 +23,10 @@ This keeps generated Python packages out of the OneDrive-backed source checkout.
 ### Optional interactive activation
 
 ```powershell
-.\activate.ps1
+. .\activate.ps1
 ```
+
+The leading dot and space execute the wrapper in the current PowerShell scope so the activated environment remains available for the rest of that terminal session.
 
 Activation is a developer convenience, not a runtime requirement. Use it when you want commands such as `python`, `pip`, or `pytest` in the current PowerShell session to resolve to EldenLord's venv.
 
