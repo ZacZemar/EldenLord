@@ -9,6 +9,7 @@ import unittest
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from query import (
+    build_bleed_sources,
     get_bleed_weapons,
     get_bleed_incantations,
     get_bleed_talismans,
@@ -201,6 +202,46 @@ class TestBleedBuildQueryLogic(unittest.TestCase):
 
     def tearDown(self):
         os.remove(self.db_path)
+
+    def test_build_bleed_sources_for_innate_bleed(self):
+        sources = build_bleed_sources(
+            has_innate_bleed=1,
+            can_blood_infuse=0,
+            can_receive_bleed_incantation=0,
+        )
+
+        self.assertEqual(sources, ["Innate Bleed"])
+
+    def test_build_bleed_sources_for_blood_infusion(self):
+        sources = build_bleed_sources(
+            has_innate_bleed=0,
+            can_blood_infuse=1,
+            can_receive_bleed_incantation=0,
+        )
+
+        self.assertEqual(sources, ["Blood Infusion"])
+
+    def test_build_bleed_sources_for_bleed_incantation(self):
+        sources = build_bleed_sources(
+            has_innate_bleed=0,
+            can_blood_infuse=0,
+            can_receive_bleed_incantation=1,
+        )
+
+        self.assertEqual(sources, ["Bleed Incantation"])
+
+    def test_build_bleed_sources_returns_all_applicable_sources(self):
+        sources = build_bleed_sources(
+            has_innate_bleed=1,
+            can_blood_infuse=1,
+            can_receive_bleed_incantation=1,
+        )
+
+        self.assertEqual(sources, [
+            "Innate Bleed",
+            "Blood Infusion",
+            "Bleed Incantation",
+        ])
 
     def test_get_bleed_weapons_returns_only_bleed_eligible_weapons(self):
         weapons = get_bleed_weapons(self.db_path)
