@@ -1,4 +1,4 @@
-# This is for displaying the various builds such as Bleed, Frost, etc
+# This is for displaying the various builds such as Bleed, Frost, etc.
 
 from query import get_bleed_build, get_madness_build, get_frost_build
 
@@ -27,6 +27,18 @@ def display_bleed_build():
 
         print("-" * 40)
 
+    print("\n--- Bleed Incantations ---")
+    for incantation in build["incantations"]:
+        print(f"Incantation : {incantation['name']}")
+        print(f"Description : {incantation['description']}")
+        print("-" * 40)
+
+    print("\n--- Supporting Talismans ---")
+    for talisman in build["talismans"]:
+        print(f"Talisman : {talisman['name']}")
+        print(f"Effect   : {talisman['effect']}")
+        print("-" * 40)
+
 
 def display_madness_build():
     build = get_madness_build()
@@ -46,7 +58,6 @@ def display_madness_build():
         print(f"Passive    : {weapon['passive']}")
         print(f"Ash of War : {weapon['ash_of_war']}")
         print(f"Madness Via  : {', '.join(weapon['status_effect_sources'])}")
-        
         print("-" * 40)
 
     print("\n--- Frenzied Flame Incantations ---")
@@ -71,6 +82,7 @@ def display_madness_build():
         print(f"Talisman : {talisman['name']}")
         print(f"Effect   : {talisman['effect']}")
         print("-" * 40)
+
 
 def display_frost_build():
     build = get_frost_build()
