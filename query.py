@@ -2,6 +2,26 @@ import sqlite3
 
 DB_NAME = "elden_lord.db"
 
+
+def build_bleed_sources(
+    has_innate_bleed,
+    can_blood_infuse,
+    can_receive_bleed_incantation,
+):
+    status_effect_sources = []
+
+    if has_innate_bleed:
+        status_effect_sources.append("Innate Bleed")
+
+    if can_blood_infuse:
+        status_effect_sources.append("Blood Infusion")
+
+    if can_receive_bleed_incantation:
+        status_effect_sources.append("Bleed Incantation")
+
+    return status_effect_sources
+
+
 def get_bleed_weapons(db_name=DB_NAME):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
@@ -20,16 +40,21 @@ def get_bleed_weapons(db_name=DB_NAME):
     results = []
 
     for weapon in weapons:
-        weapon_id, name, scaling, ash_of_war, innate, infuse, incant = weapon
+        (
+            weapon_id,
+            name,
+            scaling,
+            ash_of_war,
+            has_innate_bleed,
+            can_blood_infuse,
+            can_receive_bleed_incantation,
+        ) = weapon
 
-        # Build a short eligibility summary
-        reasons = []
-        if innate:
-            reasons.append("Innate Bleed")
-        if infuse:
-            reasons.append("Blood Infusion")
-        if incant:
-            reasons.append("Bleed Incantation")
+        status_effect_sources = build_bleed_sources(
+            has_innate_bleed,
+            can_blood_infuse,
+            can_receive_bleed_incantation,
+        )
 
         # Fetch compatible incantations from junction table
         cursor.execute("""
@@ -44,7 +69,7 @@ def get_bleed_weapons(db_name=DB_NAME):
             "name": name,
             "scaling": scaling,
             "ash_of_war": ash_of_war,
-            "status_effect_sources": reasons,
+            "status_effect_sources": status_effect_sources,
             "incantations": incantations if incantations else None
         })
 
