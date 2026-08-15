@@ -1,4 +1,4 @@
-from query import display_bleed_build, display_madness_build, display_frost_build
+from cli_display import display_bleed_build, display_madness_build, display_frost_build
  
 def main():
     choices = ["1","2","3","4","5"]

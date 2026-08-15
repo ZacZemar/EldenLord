@@ -52,24 +52,6 @@ def get_bleed_weapons(db_name=DB_NAME):
     return results
 
 
-def display_bleed_weapons():
-    weapons = get_bleed_weapons()
-
-    print("\n=== BLEED ELIGIBLE WEAPONS ===\n")
-
-    for w in weapons:
-        print(f"Weapon     : {w['name']}")
-        print(f"Scaling    : {w['scaling']}")
-        print(f"Ash of War : {w['ash_of_war']}")
-        print(f"Bleed Via  : {', '.join(w['status_effect_sources'])}")
-
-        if w["incantations"]:
-            print(f"Incants    : {', '.join(w['incantations'])}")
-        else:
-            print(f"Incants    : No incantation buffs compatible")
-
-        print("-" * 40)
-
 def get_bleed_incantations(db_name=DB_NAME):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
@@ -145,42 +127,6 @@ def get_bleed_build(db_name=DB_NAME):
         "talismans": get_bleed_talismans(db_name),
     }
 
-
-def display_bleed_build():
-    build = get_bleed_build()
-
-    print("\n=== BLEED BUILD ===\n")
-    print(build["summary"])
-
-    print("\n--- Mechanic Notes ---")
-    for note in build["mechanic_notes"]:
-        print(f"- {note}")
-
-    print("\n--- Bleed Eligible Weapons ---")
-    for weapon in build["weapons"]:
-        print(f"Weapon     : {weapon['name']}")
-        print(f"Scaling    : {weapon['scaling']}")
-        print(f"Ash of War : {weapon['ash_of_war']}")
-        print(f"Bleed Via  : {', '.join(weapon['status_effect_sources'])}")
-
-        if weapon["incantations"]:
-            print(f"Incants    : {', '.join(weapon['incantations'])}")
-        else:
-            print("Incants    : No incantation buffs compatible")
-
-        print("-" * 40)
-
-    print("\n--- Bleed Incantations ---")
-    for incantation in build["incantations"]:
-        print(f"Incantation : {incantation['name']}")
-        print(f"Description : {incantation['description']}")
-        print("-" * 40)
-
-    print("\n--- Supporting Talismans ---")
-    for talisman in build["talismans"]:
-        print(f"Talisman : {talisman['name']}")
-        print(f"Effect   : {talisman['effect']}")
-        print("-" * 40)
 
 
 def build_madness_sources(
@@ -354,50 +300,6 @@ def get_madness_build(db_name=DB_NAME):
     }
 
 
-def display_madness_build(db_name=DB_NAME):
-    build = get_madness_build(db_name)
-
-    print("\n=== MADNESS / FRENZIED FLAME BUILD ===\n")
-    print(build["summary"])
-
-    print("\n--- Mechanic Notes ---")
-    for note in build["mechanic_notes"]:
-        print(f"- {note}")
-
-    print("\n--- Madness Weapons ---")
-    for weapon in build["weapons"]:
-        print(f"Weapon     : {weapon['name']}")
-        print(f"Scaling    : {weapon['scaling']}")
-        print(f"Damage     : {weapon['damage']}")
-        print(f"Passive    : {weapon['passive']}")
-        print(f"Ash of War : {weapon['ash_of_war']}")
-        print(f"Madness Via  : {', '.join(weapon['status_effect_sources'])}")
-        
-        print("-" * 40)
-
-    print("\n--- Frenzied Flame Incantations ---")
-    for incantation in build["incantations"]:
-        print(f"Incantation : {incantation['name']}")
-        print(f"Description : {incantation['description']}")
-        print("-" * 40)
-
-    print("\n--- Recommended Seals ---")
-    for seal in build["seals"]:
-        bonus_display = f"{seal['bonus_pct']}%" if seal["bonus_pct"] is not None else "None"
-
-        print(f"Seal       : {seal['name']}")
-        print(f"Scaling    : {seal['primary_scaling']}")
-        print(f"Category   : {seal['incant_category']}")
-        print(f"Bonus      : {bonus_display}")
-        print(f"Notes      : {seal['notes']}")
-        print("-" * 40)
-
-    print("\n--- Supporting Talismans ---")
-    for talisman in build["talismans"]:
-        print(f"Talisman : {talisman['name']}")
-        print(f"Effect   : {talisman['effect']}")
-        print("-" * 40)
-
 
 def build_frost_sources(
 has_innate_frost,
@@ -514,27 +416,4 @@ def get_frost_build(db_name=DB_NAME):
         "sorceries": [],
         "talismans": [],
         "seals": []
-    }   
-
-def display_frost_build(db_name=DB_NAME):
-    build = get_frost_build(db_name)
-
-    print("\n=== FROST BUILD ===\n")
-    print(build["summary"])
-
-    print("\n--- Mechanic Notes ---")
-    for note in build["mechanic_notes"]:
-        print(f"- {note}")
-
-    print("\n--- Frost Eligible Weapons ---")
-    for weapon in build["weapons"]:
-        print(f"Weapon     : {weapon['name']}")
-        print(f"Scaling    : {weapon['scaling']}")
-        print(f"Ash of War : {weapon['ash_of_war']}")
-        print(f"Frost Via  : {', '.join(weapon['status_effect_sources'])}")
-
-        print("-" * 40)
-
-
-if __name__ == "__main__":
-    display_bleed_weapons()
+    }
