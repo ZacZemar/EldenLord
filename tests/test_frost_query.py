@@ -1,3 +1,6 @@
+import json
+
+
 # tests/test_frost_query.py
 
 import sqlite3
@@ -270,3 +273,44 @@ def test_get_frost_build_returns_structured_build_contract(tmp_path):
     assert build["sorceries"] == []
     assert build["talismans"] == []
     assert build["seals"] == []
+
+
+def test_get_frost_build_is_json_round_trip_safe(tmp_path):
+    db_path = create_test_db(tmp_path)
+
+    insert_weapon(
+        db_path,
+        weapon_id=1,
+        name="Nagakiba",
+        passive="Bleed (45)",
+        can_cold_infuse=1,
+        can_receive_frozen_grease=1,
+        can_receive_frozen_armament=1,
+    )
+
+    build = get_frost_build(db_path)
+
+    serialized_build = json.dumps(build)
+    deserialized_build = json.loads(serialized_build)
+
+    assert deserialized_build == build
+
+
+def test_frost_weapon_status_sources_have_contract_shape(tmp_path):
+    db_path = create_test_db(tmp_path)
+
+    insert_weapon(
+        db_path,
+        weapon_id=1,
+        name="Nagakiba",
+        passive="Bleed (45)",
+        can_cold_infuse=1,
+        can_receive_frozen_grease=1,
+        can_receive_frozen_armament=1,
+    )
+
+    weapon = get_frost_build(db_path)["weapons"][0]
+
+    assert isinstance(weapon["name"], str)
+    assert isinstance(weapon["status_effect_sources"], list)
+    assert all(isinstance(source, str) for source in weapon["status_effect_sources"])
