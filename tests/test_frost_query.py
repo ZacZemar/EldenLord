@@ -314,4 +314,3 @@ def test_frost_weapon_status_sources_have_contract_shape(tmp_path):
     assert isinstance(weapon["name"], str)
     assert isinstance(weapon["status_effect_sources"], list)
     assert all(isinstance(source, str) for source in weapon["status_effect_sources"])
-
