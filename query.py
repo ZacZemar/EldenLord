@@ -70,7 +70,7 @@ def get_bleed_weapons(db_name=DB_NAME):
             "scaling": scaling,
             "ash_of_war": ash_of_war,
             "status_effect_sources": status_effect_sources,
-            "incantations": incantations if incantations else None
+            "incantations": incantations,
         })
 
     conn.close()
@@ -149,7 +149,9 @@ def get_bleed_build(db_name=DB_NAME):
         ],
         "weapons": get_bleed_weapons(db_name),
         "incantations": get_bleed_incantations(db_name),
+        "sorceries": [],
         "talismans": get_bleed_talismans(db_name),
+        "seals": [],
     }
 
 
@@ -320,6 +322,7 @@ def get_madness_build(db_name=DB_NAME):
         ],
         "weapons": get_madness_weapons(db_name),
         "incantations": get_madness_incantations(db_name),
+        "sorceries": [],
         "seals": get_madness_seals(db_name),
         "talismans": get_madness_talismans(db_name),
     }
