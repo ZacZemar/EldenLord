@@ -1,6 +1,7 @@
 import sys
 import os
 from pathlib import Path
+import json
 import sqlite3
 import tempfile
 import unittest
@@ -314,15 +315,21 @@ class TestBleedBuildQueryLogic(unittest.TestCase):
             "mechanic_notes",
             "weapons",
             "incantations",
+            "sorceries",
             "talismans",
+            "seals",
         }
 
         self.assertEqual(set(build.keys()), expected_keys)
 
-        for section in ["weapons", "incantations", "talismans"]:
+        for section in ["weapons", "incantations", "sorceries", "talismans", "seals"]:
             self.assertIsInstance(build[section], list)
             for item in build[section]:
                 self.assertIsInstance(item, dict)
+
+        self.assertEqual(build["sorceries"], [])
+        self.assertEqual(build["seals"], [])
+        self.assertEqual(json.loads(json.dumps(build)), build)
 
 
 if __name__ == "__main__":
