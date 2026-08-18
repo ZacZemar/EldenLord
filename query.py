@@ -1,5 +1,7 @@
 import sqlite3
 
+from validators.build_validator import validate_build_response
+
 DB_NAME = "elden_lord.db"
 
 
@@ -127,7 +129,7 @@ def get_bleed_talismans(db_name=DB_NAME):
 
 
 def get_bleed_build(db_name=DB_NAME):
-    return {
+    build = {
         "build_type": "bleed",
         "summary": (
             "Bleed builds focus on triggering blood loss through innate bleed weapons, "
@@ -153,6 +155,9 @@ def get_bleed_build(db_name=DB_NAME):
         "talismans": get_bleed_talismans(db_name),
         "seals": [],
     }
+
+    validate_build_response(build)
+    return build
 
 
 
@@ -295,7 +300,7 @@ def get_madness_talismans(db_name=DB_NAME):
 
 
 def get_madness_build(db_name=DB_NAME):
-    return {
+    build = {
         "build_type": "madness",
         "summary": (
             "Madness/Frenzied Flame builds combine Madness weapons, "
@@ -326,6 +331,9 @@ def get_madness_build(db_name=DB_NAME):
         "seals": get_madness_seals(db_name),
         "talismans": get_madness_talismans(db_name),
     }
+
+    validate_build_response(build)
+    return build
 
 
 
@@ -417,7 +425,7 @@ def get_frost_weapons(db_name=DB_NAME):
 
 
 def get_frost_build(db_name=DB_NAME):
-    return {
+    build = {
         "build_type": "frost",
         "summary": (
             "Frost builds focus on triggering frost bite through innate frost weapons, "
@@ -445,3 +453,6 @@ def get_frost_build(db_name=DB_NAME):
         "talismans": [],
         "seals": []
     }
+
+    validate_build_response(build)
+    return build
