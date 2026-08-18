@@ -60,6 +60,39 @@ class TestBuildResponseValidator(unittest.TestCase):
         with self.assertRaises(BuildResponseValidationError):
             validate_build_response(build)
 
+    def test_optional_weapon_fields_can_be_absent_or_none(self):
+        build = make_valid_build()
+        build["weapons"][0].update({
+            "scaling": None,
+            "damage": None,
+            "passive": None,
+            "ash_of_war": None,
+        })
+
+        self.assertIsNone(validate_build_response(build))
+
+    def test_optional_weapon_fields_accept_expected_types(self):
+        build = make_valid_build()
+        build["weapons"][0].update({
+            "weapon_id": 13,
+            "scaling": "STR D / DEX B",
+            "damage": "Physical 115",
+            "passive": "Blood Loss 45",
+            "ash_of_war": "Kick",
+            "incantations": ["Bloodflame Blade"],
+        })
+
+        self.assertIsNone(validate_build_response(build))
+
+    def test_invalid_optional_weapon_field_types_fail(self):
+        build = make_valid_build()
+        build["weapons"][0]["weapon_id"] = True
+        build["weapons"][0]["damage"] = 115
+        build["weapons"][0]["incantations"] = ["Bloodflame Blade", 42]
+
+        with self.assertRaises(BuildResponseValidationError):
+            validate_build_response(build)
+
 
 if __name__ == "__main__":
     unittest.main()
