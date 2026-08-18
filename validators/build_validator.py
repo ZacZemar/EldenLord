@@ -25,6 +25,13 @@ BUILD_COLLECTION_KEYS = frozenset({
     "seals",
 })
 
+OPTIONAL_WEAPON_STRING_KEYS = frozenset({
+    "scaling",
+    "damage",
+    "passive",
+    "ash_of_war",
+})
+
 
 class BuildResponseValidationError(ValueError):
     """Raised when a BuildResponse violates the shared contract."""
@@ -85,6 +92,29 @@ def validate_build_response(build):
                 errors.append(
                     f"weapons[{index}].status_effect_sources must contain only strings"
                 )
+
+            if "weapon_id" in weapon and (
+                isinstance(weapon["weapon_id"], bool)
+                or not isinstance(weapon["weapon_id"], int)
+            ):
+                errors.append(f"weapons[{index}].weapon_id must be an integer")
+
+            for key in OPTIONAL_WEAPON_STRING_KEYS:
+                if key in weapon and weapon[key] is not None and not isinstance(
+                    weapon[key], str
+                ):
+                    errors.append(
+                        f"weapons[{index}].{key} must be a string or None"
+                    )
+
+            if "incantations" in weapon:
+                incantations = weapon["incantations"]
+                if not isinstance(incantations, list):
+                    errors.append(f"weapons[{index}].incantations must be a list")
+                elif not all(isinstance(name, str) for name in incantations):
+                    errors.append(
+                        f"weapons[{index}].incantations must contain only strings"
+                    )
 
     if errors:
         raise BuildResponseValidationError("; ".join(errors))
